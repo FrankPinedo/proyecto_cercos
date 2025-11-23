@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <servlet>
+        <servlet-name>pagoEmpleado</servlet-name>
+        <servlet-class>controlador.PagoEmpleadoControlador</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>materiales</servlet-name>
+        <servlet-class>controlador.MaterialControlador</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>dashboard</servlet-name>
+        <servlet-class>controlador.DashboardControlador</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pagoEmpleado</servlet-name>
+        <url-pattern>/pagoEmpleado</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>materiales</servlet-name>
+        <url-pattern>/materiales</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dashboard</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>/vista/login.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>
