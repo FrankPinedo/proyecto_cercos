@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:b="http://bootsfaces.net/ui">
+    <h:head>
+        <title>#{msg['template.titulo']}</title>
+        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/sb-admin-2.min.css" />
+    </h:head>
+    <h:body styleClass="bg-light">
+        <b:container fluid="true" style="padding:0">
+            <b:row>
+                <b:column col-md="12" styleClass="mb-3">
+                    <b:navBar brandHref="#{facesContext.externalContext.requestContextPath}/dashboard"
+                              brand="#{msg['template.titulo']}"
+                              brandStyle="font-weight:bold;">
+                        <b:navbarLinks>
+                            <b:navLink href="#{facesContext.externalContext.requestContextPath}/dashboard" value="#{msg['template.nav.dashboard']}" />
+                            <b:navLink href="#{facesContext.externalContext.requestContextPath}/facelets/materiales.xhtml" value="#{msg['template.nav.materiales']}" />
+                            <b:navLink href="#{facesContext.externalContext.requestContextPath}/vista/logout.jsp" value="#{msg['template.nav.logout']}" />
+                        </b:navbarLinks>
+                    </b:navBar>
+                </b:column>
+            </b:row>
+            <b:row styleClass="p-3">
+                <b:column col-md="12">
+                    <b:messages styleClass="mb-3" auto-update="true" />
+                    <ui:insert name="contenido" />
+                </b:column>
+            </b:row>
+        </b:container>
+    </h:body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui"
+                template="template.xhtml">
+
+    <ui:define name="contenido">
+        <b:panel title="#{msg['materiales.titulo']}" look="primary" collapsible="false">
+            <p class="text-muted">#{msg['materiales.subtitulo']}</p>
+            <h:form id="formMaterial">
+                <h:inputHidden value="#{materialBean.materialActual.id}" />
+                <b:row>
+                    <b:column col-md="6">
+                        <b:inputText label="#{msg['materiales.form.nombre']}" value="#{materialBean.materialActual.nombre}"
+                                     required="true" placeholder="#{msg['materiales.form.nombre']}" />
+                    </b:column>
+                    <b:column col-md="6">
+                        <b:inputText label="#{msg['materiales.form.unidad']}" value="#{materialBean.materialActual.unidadDeMedida}"
+                                     required="true" placeholder="m, kg, unidad" />
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column col-md="6">
+                        <b:inputText label="#{msg['materiales.form.costo']}" value="#{materialBean.materialActual.costoUnitario}"
+                                     type="number" step="0.01" min="0" required="true" />
+                    </b:column>
+                    <b:column col-md="6">
+                        <b:inputText label="#{msg['materiales.form.stock']}" value="#{materialBean.materialActual.stockActual}"
+                                     type="number" step="0.01" min="0" required="true" />
+                    </b:column>
+                </b:row>
+                <b:row>
+                    <b:column col-md="6">
+                        <b:selectOneMenu label="#{msg['materiales.form.moneda']}" value="#{materialBean.monedaDestino}">
+                            <f:selectItem itemLabel="USD" itemValue="USD" />
+                            <f:selectItem itemLabel="EUR" itemValue="EUR" />
+                            <f:selectItem itemLabel="GBP" itemValue="GBP" />
+                            <f:ajax listener="#{materialBean.actualizarTipoCambio}" render=":tablaMateriales :tasaCambio" />
+                        </b:selectOneMenu>
+                    </b:column>
+                </b:row>
+                <b:commandButton value="#{msg['materiales.form.guardar']}" look="primary" icon="save"
+                                 actionListener="#{materialBean.guardar}" update=":formMaterial :tablaMateriales :tasaCambio" />
+                <b:commandButton value="#{msg['materiales.form.nuevo']}" look="secondary" icon="plus"
+                                 styleClass="ml-2" actionListener="#{materialBean.prepararNuevo}" update=":formMaterial" />
+            </h:form>
+        </b:panel>
+
+        <b:panel title="Listado" look="default">
+            <h:panelGroup id="tasaCambio">
+                <h:outputText value="1 PEN = #{materialBean.tipoCambioActual} #{materialBean.monedaDestino}"
+                              rendered="#{not empty materialBean.tipoCambioActual}" styleClass="badge badge-info p-2" />
+                <h:outputText value="Tipo de cambio no disponible" rendered="#{empty materialBean.tipoCambioActual}" styleClass="text-warning" />
+            </h:panelGroup>
+            <h:form id="tablaMateriales">
+                <b:dataTable value="#{materialBean.materiales}" var="mat" page-length="5" paginator="true"
+                             border="true" responsive="true">
+                    <b:dataTableColumn label="#{msg['materiales.form.nombre']}">
+                        <h:outputText value="#{mat.nombre}" />
+                    </b:dataTableColumn>
+                    <b:dataTableColumn label="#{msg['materiales.form.unidad']}">
+                        <h:outputText value="#{mat.unidadDeMedida}" />
+                    </b:dataTableColumn>
+                    <b:dataTableColumn label="#{msg['materiales.form.costo']}">
+                        <h:outputText value="#{mat.costoUnitario}" />
+                    </b:dataTableColumn>
+                    <b:dataTableColumn label="#{msg['materiales.lista.costoConvertido']}">
+                        <h:outputText value="#{materialBean.obtenerCostoConvertido(mat)}" />
+                    </b:dataTableColumn>
+                    <b:dataTableColumn label="#{msg['materiales.form.stock']}">
+                        <h:outputText value="#{mat.stockActual}" />
+                    </b:dataTableColumn>
+                    <b:dataTableColumn label="Acciones">
+                        <b:commandButton look="info" icon="edit" value="Editar"
+                                         actionListener="#{materialBean.editar(mat)}" update=":formMaterial" />
+                        <b:commandButton look="danger" icon="trash" value="Eliminar" styleClass="ml-2"
+                                         actionListener="#{materialBean.eliminar(mat)}" update=":tablaMateriales" />
+                    </b:dataTableColumn>
+                </b:dataTable>
+            </h:form>
+        </b:panel>
+    </ui:define>
+</ui:composition>

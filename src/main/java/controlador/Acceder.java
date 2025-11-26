@@ -42,7 +42,7 @@ public class Acceder extends HttpServlet {
             if (rs.next()) {
                 HttpSession session = request.getSession();
                 session.setAttribute("id", rs.getInt("id"));
-                response.sendRedirect("vista/index.jsp");
+                response.sendRedirect("dashboard");
             }else{
                 response.sendRedirect("vista/login.jsp?error");
             }

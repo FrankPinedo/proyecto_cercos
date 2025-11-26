@@ -1,6 +1,5 @@
 package controlador;
 
-import modelo.DAO.MaterialDAO;
 import modelo.DTO.MaterialDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,11 +7,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import servicio.MaterialService;
 
 @WebServlet(name = "materiales", urlPatterns = {"/materiales"})
 public class MaterialControlador extends HttpServlet {
 
-    private MaterialDAO dao = new MaterialDAO();
+    private final MaterialService materialService = new MaterialService();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String accion = request.getParameter("accion");
@@ -39,7 +39,7 @@ public class MaterialControlador extends HttpServlet {
     }
 
     protected void listar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("materiales", dao.listar());
+        request.setAttribute("materiales", materialService.listar());
         request.getRequestDispatcher("vista/ver-materiales.jsp").forward(request, response);
     }
 
@@ -56,16 +56,10 @@ public class MaterialControlador extends HttpServlet {
         m.setCostoUnitario(Double.parseDouble(request.getParameter("costoUnitario")));
         m.setStockActual(Double.parseDouble(request.getParameter("stockActual")));
 
-        int res;
+        boolean res = materialService.guardar(m);
 
-        if (m.getId() == 0) {
-            res = dao.registrar(m);
-        } else {
-            res = dao.editar(m);
-        }
-        
-        
-        if (res > 0) {
+
+        if (res) {
             request.getSession().setAttribute("success", "Material guardado!");
             response.sendRedirect("materiales?accion=listar");
         } else {
@@ -77,7 +71,7 @@ public class MaterialControlador extends HttpServlet {
 
     protected void editar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        MaterialDTO m = dao.buscarPorID(id);
+        MaterialDTO m = materialService.obtenerPorId(id).orElse(null);
         if (m != null) {
             request.setAttribute("material", m);
             request.getRequestDispatcher("vista/nuevo-material.jsp").forward(request, response);
@@ -88,8 +82,8 @@ public class MaterialControlador extends HttpServlet {
 
     protected void eliminar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        int res = dao.eliminar(id);
-        if (res > 0) {
+        boolean res = materialService.eliminar(id);
+        if (res) {
             request.getSession().setAttribute("success", "Material eliminado!");
         } else {
             request.getSession().setAttribute("error", "No se pudo eliminar material");
