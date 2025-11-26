@@ -3,7 +3,7 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
-    <!-- Content Row - Métricas Principales -->
+    <!-- Content Row - MÃ©tricas Principales -->
     <div class="row">
 
         <!-- Empleados Activos -->
@@ -15,7 +15,9 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Empleados Activos
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">6</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <c:out value="${totalEmpleados}" default="0"/>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -34,7 +36,9 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Materiales en Stock
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <c:out value="${totalMateriales}" default="0"/>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-box fa-2x text-gray-300"></i>
@@ -44,38 +48,56 @@
             </div>
         </div>
 
-        <!-- Productos Disponibles -->
+        <!-- Tipo de Cambio USD -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Productos Disponibles
+                                Tipo Cambio PEN - USD
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <c:choose>
+                                    <c:when test="${not empty tipoCambioUsd}">
+                                        1 PEN = <fmt:formatNumber value="${tipoCambioUsd}" type="number" minFractionDigits="3" /> USD
+                                    </c:when>
+                                    <c:otherwise>
+                                        No disponible
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-cube fa-2x text-gray-300"></i>
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Ventas del Mes -->
+        <!-- Tipo de Cambio EUR -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Ventas del Mes (S/.)
+                                Tipo Cambio PEN - EUR
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">19,250.00 (ejemplo)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <c:choose>
+                                    <c:when test="${not empty tipoCambioEur}">
+                                        1 PEN = <fmt:formatNumber value="${tipoCambioEur}" type="number" minFractionDigits="3" /> EUR
+                                    </c:when>
+                                    <c:otherwise>
+                                        No disponible
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-euro-sign fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -86,7 +108,7 @@
     <!-- Content Row - Alertas y Resumen -->
     <div class="row">
 
-        <!-- Alertas Rápidas -->
+        <!-- Alertas RÃ¡pidas -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -100,11 +122,11 @@
             </div>
         </div>
 
-        <!-- Últimas Ventas (Resumen Simple) -->
+        <!-- Ãšltimas Ventas (Resumen Simple) -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Últimas Ventas</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Ãšltimas Ventas</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

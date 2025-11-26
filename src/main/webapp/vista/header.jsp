@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
     String path = request.getContextPath();
 
@@ -33,14 +34,14 @@
 
         <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<%=path%>/vista/index.jsp">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<%=path%>/dashboard">
                 <div class="sidebar-brand-text mx-2"> Sistema de Cercos</div>
             </a>
 
             <hr class="sidebar-divider my-0">
 
             <li class="nav-item active">
-                <a class="nav-link" href="<%=path%>/vista/index.jsp">
+                <a class="nav-link" href="<%=path%>/dashboard">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Panel Principal</span></a>
             </li>
@@ -80,6 +81,7 @@
                         <h6 class="collapse-header">Acciones:</h6>
                         <a class="collapse-item" href="<%=path%>/materiales?accion=listar">Ver Materiales</a>
                         <a class="collapse-item" href="<%=path%>/materiales?accion=agregar">Agregar Material</a>
+                        <a class="collapse-item" href="<%=path%>/facelets/materiales.xhtml">Materiales (JSF)</a>
                     </div>
                 </div>
             </li>

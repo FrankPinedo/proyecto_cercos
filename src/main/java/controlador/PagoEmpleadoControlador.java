@@ -5,18 +5,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import modelo.DAO.EmpleadoDAO;
 import modelo.DTO.EmpleadoDTO;
-import modelo.DAO.PagoEmpleadoDAO;
 import modelo.DTO.PagoEmpleadoDTO;
+import servicio.EmpleadoService;
+import servicio.PagoEmpleadoService;
 
 @WebServlet(name = "pago-empleado", urlPatterns = {"/pago-empleado"})
 public class PagoEmpleadoControlador extends HttpServlet {
 
-    private final PagoEmpleadoDAO daoPago = new PagoEmpleadoDAO();
-    private final EmpleadoDAO daoEmpleado = new EmpleadoDAO();
+    private final PagoEmpleadoService pagoEmpleadoService = new PagoEmpleadoService();
+    private final EmpleadoService empleadoService = new EmpleadoService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,20 +22,15 @@ public class PagoEmpleadoControlador extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        try {
-            if (accion == null || accion.equals("listar")) {
-                List<PagoEmpleadoDTO> pagos = daoPago.listar();
-                request.setAttribute("pagos", pagos);
-                request.getRequestDispatcher("vista/pago-empleado.jsp").forward(request, response);
+        if (accion == null || accion.equals("listar")) {
+            List<PagoEmpleadoDTO> pagos = pagoEmpleadoService.listar();
+            request.setAttribute("pagos", pagos);
+            request.getRequestDispatcher("vista/pago-empleado.jsp").forward(request, response);
 
-            } else if (accion.equals("nuevo")) {
-                List<EmpleadoDTO> empleados = daoEmpleado.ListarEmpleados();
-                request.setAttribute("empleados", empleados);
-                request.getRequestDispatcher("vista/nuevo-pago-empleado.jsp").forward(request, response);
-            }
-
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PagoEmpleadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } else if (accion.equals("nuevo")) {
+            List<EmpleadoDTO> empleados = empleadoService.listar();
+            request.setAttribute("empleados", empleados);
+            request.getRequestDispatcher("vista/nuevo-pago-empleado.jsp").forward(request, response);
         }
     }
 
@@ -58,22 +51,24 @@ public class PagoEmpleadoControlador extends HttpServlet {
                 pagoPorHora = Double.parseDouble(request.getParameter("pago_por_hora"));
             }
 
-            double pagoTotal = sueldoBase + (horasExtras * pagoPorHora);
-
             PagoEmpleadoDTO p = new PagoEmpleadoDTO();
             p.setEmpleadoId(empleadoId);
             p.setFechaPago(new Date());
             p.setSueldoBase(sueldoBase);
             p.setHorasExtras(horasExtras);
             p.setPagoPorHora(pagoPorHora);
-            p.setPagoTotal(pagoTotal);
+            p.setPagoTotal(pagoEmpleadoService.calcularPagoTotal(sueldoBase, horasExtras, pagoPorHora));
 
-            boolean exito = daoPago.registrar(p);
+            boolean exito = pagoEmpleadoService.registrar(p);
+
+            if (exito) {
+                request.getSession().setAttribute("success", "Pago registrado correctamente");
+            } else {
+                request.getSession().setAttribute("error", "No se pudo registrar el pago");
+            }
 
             response.sendRedirect("pago-empleado?accion=listar");
 
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PagoEmpleadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             request.setAttribute("error", "Datos numéricos inválidos en el formulario.");

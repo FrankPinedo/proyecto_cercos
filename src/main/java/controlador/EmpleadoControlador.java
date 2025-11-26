@@ -6,13 +6,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import modelo.DAO.EmpleadoDAO;
 import modelo.DTO.EmpleadoDTO;
+import servicio.EmpleadoService;
 
 @WebServlet(name = "empleados", urlPatterns = {"/empleados"})
 public class EmpleadoControlador extends HttpServlet {
 
-    private EmpleadoDAO empDao = new EmpleadoDAO();
+    private final EmpleadoService empleadoService = new EmpleadoService();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,7 +42,7 @@ public class EmpleadoControlador extends HttpServlet {
 
     protected void listar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("empleados", empDao.ListarEmpleados());
+        request.setAttribute("empleados", empleadoService.listar());
         request.getRequestDispatcher("vista/ver-empleados.jsp").forward(request, response);
     }
 
@@ -63,15 +63,9 @@ public class EmpleadoControlador extends HttpServlet {
         empleado.setCargo(request.getParameter("cargo"));
         empleado.setSueldoBase(Double.parseDouble(request.getParameter("sueldo")));
 
-        int resultado;
+        boolean resultado = empleadoService.guardar(empleado);
 
-        if (empleado.getId() == 0) {
-            resultado = empDao.registrar(empleado);
-        } else {
-            resultado = empDao.editar(empleado);
-        }
-
-        if (resultado > 0) {
+        if (resultado) {
             request.getSession().setAttribute("success", "Datos guardados! ");
             response.sendRedirect("empleados?accion=listar");
         } else {
@@ -85,7 +79,7 @@ public class EmpleadoControlador extends HttpServlet {
             throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
-        EmpleadoDTO empleado = empDao.buscarPorID(id);
+        EmpleadoDTO empleado = empleadoService.buscarPorId(id).orElse(null);
         if (empleado != null) {
             request.setAttribute("empleado", empleado);
             request.getRequestDispatcher("vista/nuevo-empleado.jsp").forward(request, response);
@@ -98,9 +92,9 @@ public class EmpleadoControlador extends HttpServlet {
             throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
-        int resultado = empDao.eliminar(id);
+        boolean resultado = empleadoService.eliminar(id);
 
-        if (resultado > 0) {
+        if (resultado) {
             request.getSession().setAttribute("success", "Empleado con id: " + id + ", Eliminado!");
         } else {
             request.getSession().setAttribute("error", "No se pudo eliminar empleado");
